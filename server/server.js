@@ -14,20 +14,37 @@ app.use(express.static(publicPath));           //LOADS INDEX.HTML FROM PUBLIC DI
 
 
 io.on('connection', (socket) => {              //io.on Lets u register an event listener, 'connection' - Listen for a new connection
-    console.log('New user connected');
+          console.log('New user connected');
 
-    socket.on('createMessage', (message) => {           //createEmail 2
-      console.log("createMessage", message);
-      io.emit('newMessage', {
-        from: message.from,
-        text: message.text
-        // ,
-        // createAt: new Date.getTime()
-      });
-    });
-    socket.on('disconnect', () => {
-      console.log('User was disconnected');
-    });
+          socket.emit('newMessage', {
+            from: 'Admin',
+            text: 'Welcome to the chat room',
+            createdAt: new Date().getTime()
+          });
+
+          socket.broadcast.emit('newMessage', {
+            from: 'Admin',
+            text: 'New user connected to the chat room',
+            createdAt: new Date().getTime()
+          });
+
+          socket.on('createMessage', (message) => {           //createEmail 2
+            console.log("createMessage", message);
+            io.emit('newMessage', {
+              from: message.from,
+              text: message.text,
+              createAt: new Date().getTime()
+            });
+            // socket.broadcast.emit('newMessage', {
+            //   from: message.from,
+            //   text: message.text,
+            //   createdAt: new Date.getTime()
+            // });
+          });
+
+          socket.on('disconnect', () => {
+            console.log('User was disconnected');
+          });
 });
 
 
