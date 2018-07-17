@@ -2,7 +2,7 @@ const path = require('path');
 const http = require('http');                   //CONFIGURING HTTP TO WORK ON SOCKET----------1
 const express = require('express');
 const socketIO = require('socket.io');          //To install web sockets dead easily
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLoactionMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -25,12 +25,12 @@ io.on('connection', (socket) => {              //io.on Lets u register an event 
             console.log("createMessage", message);
             io.emit('newMessage',generateMessage(message.from, message.text));
             callback('This is from the server.');
-            // socket.broadcast.emit('newMessage', {
-            //   from: message.from,
-            //   text: message.text,
-            //   createdAt: new Date.getTime()
-            // });
           });
+
+            socket.on('createLocationMessage', (coords) => {
+              io.emit('newLocationMessage', generateLoactionMessage('Admin', coords.latitude, coords.longitude));
+            });
+
 
           socket.on('disconnect', () => {
             console.log('User was disconnected');
