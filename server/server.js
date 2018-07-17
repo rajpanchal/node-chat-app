@@ -24,7 +24,7 @@ io.on('connection', (socket) => {              //io.on Lets u register an event 
           socket.on('createMessage', (message, callback) => {           //createEmail 2
             console.log("createMessage", message);
             io.emit('newMessage',generateMessage(message.from, message.text));
-            callback('This is from the server.');
+            callback();
           });
 
             socket.on('createLocationMessage', (coords) => {
