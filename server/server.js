@@ -3,6 +3,7 @@ const http = require('http');                   //CONFIGURING HTTP TO WORK ON SO
 const express = require('express');
 const socketIO = require('socket.io');          //To install web sockets dead easily
 const {generateMessage, generateLoactionMessage} = require('./utils/message');
+const{isRealString} = require('./utils/validation.js');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -17,9 +18,18 @@ app.use(express.static(publicPath));           //LOADS INDEX.HTML FROM PUBLIC DI
 io.on('connection', (socket) => {              //io.on Lets u register an event listener, 'connection' - Listen for a new connection
           console.log('New user connected');
 
-          socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app!'));
+          socket.on('join', (params, callback) => {
+            if(!isRealString(params.name) || !isRealString(params.room)){
+              callback('Name and room details are required');
+            }
+            socket.join(params.room);
+            socket.emit('newMessage',generateMessage('Admin', 'Welcome to the chat app'));
+            socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
+            callback();
+          });
 
-          socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user connected!'));
+
+
 
           socket.on('createMessage', (message, callback) => {           //createEmail 2
             console.log("createMessage", message);
