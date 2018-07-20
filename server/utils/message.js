@@ -8,12 +8,12 @@ var generateMessage = (from, text) => {
   };
 };
 
-var generateLoactionMessage = (from, latitude, longitude) => {
+var generateLocationMessage = (from, latitude, longitude) => {
   return {
     from,
-    url: `https://google.com/maps?q=${latitude},${longitude}`,
+    url: `https://www.google.com/maps?q=${latitude},${longitude}`,
     createdAt: moment().valueOf()
-  }
-}
+  };
+};
 
-module.exports = {generateMessage, generateLoactionMessage};
+module.exports = {generateMessage, generateLocationMessage};
